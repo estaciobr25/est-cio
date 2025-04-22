@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+    <link rel="shortcut icon" href="1200x630wa.png" type="image/x-icon">
+  <title>Pagamento de Matrícula - Estácio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #003366, #0071bc);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 0.8s ease-in-out;
+      transition: all 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      width: 130px;
+      margin-bottom: 10px;
+
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      color: #003366;
+      margin-bottom: 1rem;
+    }
+
+    .aluno-info {
+      display: none;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    #qrcode, .pix-code, .buttons, #valor, #btnVoltar {
+      display: none;
+    }
+
+    #qrcode {
+      margin: 20px auto;
+      width: fit-content;
+    }
+
+    .pix-code {
+      word-break: break-word;
+      background: #f4f8fb;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-top: 15px;
+      text-align: left;
+      border: 1px dashed #ccc;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      background: #0071bc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #005a99;
+    }
+
+    .secondary-button {
+      background: #f1f1f1;
+      color: #003366;
+    }
+
+    .secondary-button:hover {
+      background: #e0e0e0;
+    }
+
+    #valor {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: #0071bc;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+    @media (max-width: 440px) {
+      .container { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="conteudo">
+    <img src="ChatGPT Image 21 de abr. de 2025, 21_21_36.png" alt="Logo Estácio" class="logo">
+    <h1>Matrícula Maio/2025</h1>
+    <input type="text" id="cpfAluno" placeholder="Digite seu CPF" maxlength="14" />
+    <button onclick="gerarPix()">🔑 Gerar Código Pix</button>
+
+    <div class="aluno-info" id="infoAluno">
+      <p><strong>Aluno:</strong> Bruno Vinicius Jolvino Camargo</p>
+      <p><strong>Curso:</strong> Análise e Desenvolvimento de Sistemas</p>
+    </div>
+
+    <div id="valor">Valor: R$ 255,00</div>
+
+    <div id="qrcode"></div>
+    <p class="pix-code" id="pixCode"></p>
+
+    <div class="buttons">
+      <button onclick="copiarPix()">📋 Copiar Código Pix</button>
+      <button id="btnVoltar" class="secondary-button" onclick="voltar()">🔙 Voltar</button>
+    </div>
+
+    <footer>Estácio © 2025</footer>
+  </div>
+
+  <!-- Biblioteca QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    function gerarPix() {
+      const cpf = document.getElementById("cpfAluno").value.trim();
+
+      if (!cpf || cpf.length < 11) {
+        alert("Digite um CPF válido.");
+        return;
+      }
+
+      const payload = `00020126580014BR.GOV.BCB.PIX0136pagamento@estacio.com.br5204000053039865407255.005802BR5928Bruno Vinicius J. Camargo6009SAO PAULO62290520ID+CPF${cpf}6304`;
+
+      document.getElementById("pixCode").innerText = payload;
+
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: payload,
+        width: 180,
+        height: 180
+      });
+
+      // Mostrar dados do aluno e Pix
+      document.getElementById("infoAluno").style.display = "block";
+      document.getElementById("pixCode").style.display = "block";
+      document.getElementById("qrcode").style.display = "block";
+      document.querySelector(".buttons").style.display = "block";
+      document.getElementById("valor").style.display = "block";
+      document.getElementById("btnVoltar").style.display = "block";
+
+      // Esconder CPF
+      document.getElementById("cpfAluno").style.display = "none";
+    }
+
+    function copiarPix() {
+      const pix = document.getElementById("pixCode").innerText;
+      navigator.clipboard.writeText(pix).then(() => {
+        alert("Código Pix copiado com sucesso!");
+      });
+    }
+
+    function voltar() {
+      document.getElementById("cpfAluno").style.display = "block";
+      document.getElementById("cpfAluno").value = "";
+
+      document.getElementById("qrcode").innerHTML = "";
+      document.getElementById("qrcode").style.display = "none";
+      document.getElementById("pixCode").style.display = "none";
+      document.querySelector(".buttons").style.display = "none";
+      document.getElementById("valor").style.display = "none";
+      document.getElementById("infoAluno").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
+
